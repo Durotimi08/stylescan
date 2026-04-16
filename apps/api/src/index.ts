@@ -45,8 +45,13 @@ app.use("/scan/*", authMiddleware);
 app.use("/scans/*", authMiddleware);
 app.use("/users/*", authMiddleware);
 
-app.use("/scan/*", rateLimitMiddleware);
-app.use("/scans/*", rateLimitMiddleware);
+// Rate limit only scan creation, not listing/polling
+app.use("/scans", async (c, next) => {
+  if (c.req.method === "POST") {
+    return rateLimitMiddleware(c, next);
+  }
+  return next();
+});
 
 app.route("/scans", scanRoutes);
 app.route("/users", userRoutes);

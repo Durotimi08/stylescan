@@ -55,7 +55,7 @@ The JSON object must conform to the following structure:
   "spacing": {
     "base": number (in px),
     "scale": string[] (e.g., ["--space-0: 0", "--space-1: 4px", ...]),
-    "rules": string[] (min 1)
+    "rules": string[] (min 3 — IMPORTANT: include specific rules like "Section top/bottom padding: 96px", "Card internal padding: 24px", "Nav item gap: 8px". RAW_FACTS.spacing.patterns shows exactly how spacing is used per component type — translate these into concrete rules.)
   },
   "radii": {
     "values": [
@@ -93,8 +93,9 @@ Critical rules:
 4. Include at least 8 specific anti-patterns. Generic ones like "avoid inconsistency" are useless. Specific ones like "Never use #6e11b0 for buttons — the correct CTA color is #c7ff69" are useful.
 5. compositionRules must describe the ACTUAL page layout: section order, grid patterns, alignment, content width.
 6. implementationNotes MUST include a "Page Layout Blueprint" describing the sections in order (from AESTHETIC_ANALYSIS.layout_structure and content_sections). This is what the agent uses to structure the HTML.
-7. Output ONLY valid JSON. No preamble, no explanation, no markdown fences.
+7. SPACING IS CRITICAL. RAW_FACTS.spacing.patterns shows how spacing is actually used per component type (e.g., "section padding: 64px 24px", "card padding: 24px", "nav gap: 8px"). Translate these into specific spacing rules. Do NOT just output a generic "use 4px increments" — output rules like "Section vertical padding: 64-96px", "Card internal padding: 20-24px", "Gap between grid items: 24px", "Navigation item spacing: 8-12px". These concrete values are what make the recreated page feel right.
+8. Output ONLY valid JSON. No preamble, no explanation, no markdown fences.
 
-Quality bar: A developer reading ONLY this file should produce a page that matches the original's color scheme, layout structure, typography, and overall aesthetic.`;
+Quality bar: A developer reading ONLY this file should produce a page that matches the original's color scheme, layout structure, typography, spacing rhythm, and overall aesthetic.`;
 
-export const SYNTHESIS_PROMPT_VERSION = "2.0.0";
+export const SYNTHESIS_PROMPT_VERSION = "2.1.0";

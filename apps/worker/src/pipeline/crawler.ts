@@ -134,7 +134,14 @@ export async function crawlPage(url: string): Promise<CrawlResult> {
   const page = await context.newPage();
 
   try {
-    await page.goto(url, { waitUntil: "networkidle", timeout: 30000 });
+    // Use domcontentloaded first (fast), then wait up to 10s for network to settle.
+    // Some sites (Figma, SPAs) never reach networkidle.
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+    try {
+      await page.waitForLoadState("networkidle", { timeout: 10000 });
+    } catch {
+      // Network didn't settle — that's fine, page is loaded enough
+    }
     await page.waitForTimeout(2000);
 
     // Screenshot

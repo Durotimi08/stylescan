@@ -134,9 +134,17 @@ export interface TypeScaleEntry {
   usage: string;
 }
 
+export interface SpacingPattern {
+  context: string;
+  property: string;
+  value: string;
+  count: number;
+}
+
 export interface ClusteredSpacing {
   base: number;
   scale: number[];
+  patterns: SpacingPattern[];
 }
 
 export interface ClusteredRadii {

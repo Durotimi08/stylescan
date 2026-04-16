@@ -1,4 +1,4 @@
-import type { RawExtraction, ClusteredSpacing } from "@stylescan/types";
+import type { RawExtraction, ClusteredSpacing, SpacingPattern } from "@stylescan/types";
 
 function parsePx(value: string): number {
   const num = parseFloat(value);
@@ -12,12 +12,7 @@ function parseSpacingValues(value: string): number[] {
     .filter((v) => v > 0);
 }
 
-function snapToGrid(value: number, base: number): number {
-  return Math.round(value / base) * base;
-}
-
 function detectBase(values: number[]): number {
-  // Count multiples of 4 vs 8 vs 5
   const bases = [4, 8, 5, 6];
   let bestBase = 4;
   let bestScore = 0;
@@ -36,41 +31,63 @@ function detectBase(values: number[]): number {
   return bestBase;
 }
 
+function inferContext(tag: string, classes: string[]): string {
+  const cls = classes.join(" ").toLowerCase();
+  if (tag === "nav" || cls.includes("nav") || cls.includes("header")) return "navigation";
+  if (tag === "section" || cls.includes("section") || cls.includes("hero")) return "section";
+  if (cls.includes("card") || cls.includes("tile")) return "card";
+  if (tag === "button" || cls.includes("btn") || cls.includes("button")) return "button";
+  if (tag === "li" || cls.includes("item")) return "list-item";
+  if (tag === "footer" || cls.includes("footer")) return "footer";
+  if (cls.includes("container") || cls.includes("wrapper")) return "container";
+  if (cls.includes("grid") || cls.includes("flex")) return "layout";
+  if (tag === "input" || tag === "textarea") return "input";
+  if (tag === "h1" || tag === "h2" || tag === "h3") return "heading";
+  if (tag === "p") return "paragraph";
+  return "element";
+}
+
 export function clusterSpacing(extraction: RawExtraction): ClusteredSpacing {
   const allValues: number[] = [];
+  const patternMap = new Map<string, SpacingPattern>();
 
   for (const el of extraction.elements) {
-    const margin = el.styles.margin;
-    const padding = el.styles.padding;
-    const gap = el.styles.gap;
+    const context = inferContext(el.tag, el.classes);
 
-    if (margin) allValues.push(...parseSpacingValues(margin));
-    if (padding) allValues.push(...parseSpacingValues(padding));
-    if (gap) allValues.push(...parseSpacingValues(gap));
+    for (const [prop, label] of [
+      ["margin", "margin"],
+      ["padding", "padding"],
+      ["gap", "gap"],
+    ] as const) {
+      const raw = el.styles[prop];
+      if (!raw || raw === "0px") continue;
+
+      const values = parseSpacingValues(raw);
+      allValues.push(...values);
+
+      const key = `${context}:${label}:${raw}`;
+      const existing = patternMap.get(key);
+      if (existing) {
+        existing.count++;
+      } else {
+        patternMap.set(key, { context, property: label, value: raw, count: 1 });
+      }
+    }
   }
 
   const base = detectBase(allValues);
 
-  // Snap all values to the base grid and count occurrences
-  const histogram = new Map<number, number>();
-  for (const v of allValues) {
-    const snapped = snapToGrid(v, base);
-    if (snapped > 0 && snapped <= 256) {
-      histogram.set(snapped, (histogram.get(snapped) ?? 0) + 1);
-    }
-  }
-
-  // Build a scale from the most common values
-  const sorted = Array.from(histogram.entries())
-    .sort((a, b) => a[0] - b[0])
-    .map(([value]) => value);
-
-  // Ensure we have a reasonable scale (0 through ~128)
   const scale = [0, base, base * 2, base * 3, base * 4, base * 6, base * 8, base * 12, base * 16, base * 24, base * 32]
     .filter((v) => v <= 256);
 
+  // Top patterns by frequency — tells the LLM how spacing is actually used
+  const patterns = Array.from(patternMap.values())
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 20);
+
   return {
     base,
-    scale: scale.length > 0 ? scale : sorted.slice(0, 12),
+    scale: scale.length > 0 ? scale : [0, 4, 8, 16, 24, 32, 48, 64],
+    patterns,
   };
 }
