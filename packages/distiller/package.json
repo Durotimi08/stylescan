@@ -1,0 +1,28 @@
+{
+  "name": "@stylescan/distiller",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@stylescan/schema": "workspace:*",
+    "@stylescan/types": "workspace:*",
+    "openai": "^4.104.0"
+  },
+  "devDependencies": {
+    "@stylescan/tsconfig": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

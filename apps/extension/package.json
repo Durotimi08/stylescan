@@ -1,0 +1,35 @@
+{
+  "name": "@stylescan/extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "build:firefox": "wxt build --browser firefox",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .output .wxt dist"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.0",
+    "@radix-ui/react-select": "^2.1.0",
+    "@radix-ui/react-tabs": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.0",
+    "@stylescan/types": "workspace:*",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.469.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@stylescan/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/chrome": "^0.0.300",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0",
+    "wxt": "^0.19.0"
+  }
+}

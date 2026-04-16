@@ -1,0 +1,28 @@
+{
+  "name": "@stylescan/extractor",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@stylescan/types": "workspace:*",
+    "chroma-js": "^3.1.0"
+  },
+  "devDependencies": {
+    "@stylescan/tsconfig": "workspace:*",
+    "@types/chroma-js": "^2.4.0",
+    "typescript": "^5.7.0"
+  }
+}

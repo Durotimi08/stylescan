@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.next/
+.turbo/
+*.tsbuildinfo
+.DS_Store
+coverage/
+.wxt/
+.output/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+apps/*/.env
+
+# Local data
+.uploads/
+test-results/
+*.png
+pnpm-lock.yaml

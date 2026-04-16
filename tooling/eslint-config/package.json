@@ -1,0 +1,12 @@
+{
+  "name": "@stylescan/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0"
+  },
+  "files": ["index.js"]
+}
